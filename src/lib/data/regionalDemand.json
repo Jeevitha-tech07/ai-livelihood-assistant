@@ -1,0 +1,57 @@
+[
+  {
+    "district": "Salem",
+    "state": "Tamil Nadu",
+    "clusters": ["Textiles & Handloom", "Apparel & Garment Manufacturing", "Steel Processing", "Sago & Agriculture"],
+    "trainingCenters": [
+      {
+        "name": "Government ITI Salem",
+        "type": "Government ITI",
+        "distanceKm": 4.2,
+        "courses": ["Self Employed Tailor", "Domestic Electrician"],
+        "address": "Gorimedu, Salem - 636008"
+      },
+      {
+        "name": "PMKVY Training Centre Salem",
+        "type": "PMKVY Center",
+        "distanceKm": 6.5,
+        "courses": ["Sewing Machine Operator", "Solar PV Installer"],
+        "address": "Fairlands, Salem - 636016"
+      }
+    ],
+    "highDemandSectors": ["Apparel Made-ups & Home Furnishing", "Electronics & Hardware", "Green Jobs"],
+    "demandRating": "High"
+  },
+  {
+    "district": "Madurai",
+    "state": "Tamil Nadu",
+    "clusters": ["Textiles", "Jasmine & Agribusiness", "Automobile Ancillary", "IT Services"],
+    "trainingCenters": [
+      {
+        "name": "Government ITI Madurai",
+        "type": "Government ITI",
+        "distanceKm": 3.8,
+        "courses": ["Self Employed Tailor", "Wireman", "Micro Irrigation"],
+        "address": "K.Pudur, Madurai - 625007"
+      }
+    ],
+    "highDemandSectors": ["Apparel Made-ups & Home Furnishing", "Agriculture", "Electronics"],
+    "demandRating": "Very High"
+  },
+  {
+    "district": "Chennai",
+    "state": "Tamil Nadu",
+    "clusters": ["Automotive", "Electronics Hardware", "Garment Exports", "IT/ITES", "Healthcare"],
+    "trainingCenters": [
+      {
+        "name": "Government ITI Guindy",
+        "type": "Government ITI",
+        "distanceKm": 5.0,
+        "courses": ["Domestic Electrician", "Suryamitra Solar Installer", "Sewing Machine Operator"],
+        "address": "Guindy Industrial Estate, Chennai - 600032"
+      }
+    ],
+    "highDemandSectors": ["Electronics & Hardware", "Apparel Made-ups & Home Furnishing", "Green Jobs"],
+    "demandRating": "High"
+  }
+]

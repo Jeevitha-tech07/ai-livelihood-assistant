@@ -1,0 +1,46 @@
+[
+  {
+    "id": "pm-ajay",
+    "name": "PM-AJAY (Pradhan Mantri Anusuchit Jaati Abhyuday Yojana)",
+    "ministry": "Ministry of Social Justice and Empowerment",
+    "type": "Skill & Livelihood Grant",
+    "description": "Comprehensive grant assistance for skill development, micro-enterprise creation, and infrastructure for eligible beneficiaries.",
+    "benefits": "Up to ₹50,000 capital subsidy per beneficiary for micro-enterprise setup + 100% free NSQF skill training.",
+    "eligibility": "SC / Rural Beneficiaries with annual household income below ₹3.0 Lakh.",
+    "officialUrl": "https://pmajay.dosje.gov.in/",
+    "isVerified": true
+  },
+  {
+    "id": "pmkvy-4",
+    "name": "PMKVY 4.0 (Pradhan Mantri Kaushal Vikas Yojana)",
+    "ministry": "Ministry of Skill Development and Entrepreneurship (MSDE)",
+    "type": "Skill Certification & Stipend",
+    "description": "Free industry-aligned skill training under NSQF framework with digital badge certification and direct placement assistance.",
+    "benefits": "Free training + ₹1,500 assessment stipend + official NCVET certificate + job placement assistance.",
+    "eligibility": "Youth aged 15-45 with basic education seeking formal skill certification.",
+    "officialUrl": "https://www.pmkvyofficial.org/",
+    "isVerified": true
+  },
+  {
+    "id": "mudra",
+    "name": "Pradhan Mantri MUDRA Yojana (PMMY)",
+    "ministry": "Ministry of Finance",
+    "type": "Micro-Credit Loan",
+    "description": "Collateral-free micro loans for non-farm micro and small enterprises to launch or expand self-employment business.",
+    "benefits": "Shishu Loan up to ₹50,000 collateral-free at low interest rate for initial equipment and machinery.",
+    "eligibility": "Self-employed individuals, artisans, tailors, and micro-entrepreneurs.",
+    "officialUrl": "https://www.mudra.org.in/",
+    "isVerified": true
+  },
+  {
+    "id": "day-nrlm",
+    "name": "DAY-NRLM / TNSRLM (Tamil Nadu State Livelihood Mission)",
+    "ministry": "Ministry of Rural Development",
+    "type": "Self-Help Group & Revolving Fund",
+    "description": "Financial assistance, revolving fund grants, and market linkages for rural women and community self-help groups.",
+    "benefits": "Revolving fund of ₹15,000 + Community Investment Fund up to ₹1.10 Lakh per SHG.",
+    "eligibility": "Rural women self-help groups and individual women artisans.",
+    "officialUrl": "https://nrlm.gov.in/",
+    "isVerified": true
+  }
+]
