@@ -56,7 +56,7 @@ export class SarvamService implements ISarvamService {
         const formData = new FormData();
         const blob = new Blob([Uint8Array.from(audioBuffer)], { type: 'audio/wav' });
         formData.append('file', blob, 'recording.wav');
-        formData.append('model', 'saarika:v1');
+        formData.append('model', 'saaras:v3');
         formData.append('language_code', targetLang);
 
         const response = await fetch('https://api.sarvam.ai/speech-to-text', {

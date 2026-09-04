@@ -43,14 +43,77 @@ export function ChatInputForm({
     };
   }, []);
 
+  const recognitionRef = useRef<unknown>(null);
+
+  const startWebSpeechSTT = () => {
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition =
+      (window as unknown as { SpeechRecognition?: typeof React.Component }).SpeechRecognition ||
+      (window as unknown as { webkitSpeechRecognition?: typeof React.Component }).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) return;
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const recognition = new (SpeechRecognition as any)();
+      const targetLang = currentLanguage === 'ta' ? 'ta-IN' : 'en-IN';
+      recognition.lang = targetLang;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognitionRef.current = recognition;
+
+      console.log('[ChatInputForm WebSpeech] Started recognition with lang:', targetLang);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onresult = (event: any) => {
+        let textResult = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          textResult += event.results[i][0].transcript;
+        }
+        if (textResult.trim()) {
+          console.log('[ChatInputForm WebSpeech] Real-time transcript:', textResult);
+          setInputText(textResult.trim());
+          setErrorMessage(null);
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      recognition.onerror = (event: any) => {
+        console.warn('[ChatInputForm WebSpeech Error]:', event.error);
+      };
+
+      recognition.onend = () => {
+        console.log('[ChatInputForm WebSpeech] Recognition ended');
+      };
+
+      recognition.start();
+    } catch (e) {
+      console.warn('[ChatInputForm WebSpeech Exception]:', e);
+    }
+  };
+
+  const stopWebSpeechSTT = () => {
+    if (recognitionRef.current) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (recognitionRef.current as any).stop();
+      } catch (e) {
+        console.warn('[ChatInputForm WebSpeech Stop Error]:', e);
+      }
+      recognitionRef.current = null;
+    }
+  };
+
   const handleStartRecording = async () => {
     setErrorMessage(null);
 
-    // Check browser support
+    // Start WebSpeech in real-time as instant speech-to-text feedback
+    startWebSpeechSTT();
+
+    // Check browser support for MediaRecorder audio streaming
     if (!navigator?.mediaDevices?.getUserMedia) {
       console.warn('[ChatInputForm] navigator.mediaDevices.getUserMedia unsupported');
-      setErrorMessage('Microphone access is not supported by this browser.');
-      fallbackWebSpeechSTT();
+      setMicState('recording');
       return;
     }
 
@@ -84,17 +147,11 @@ export function ChatInputForm({
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' });
         console.log('[ChatInputForm] Created audio blob, size:', audioBlob.size, 'bytes');
 
-        if (audioBlob.size < 100) {
-          setErrorMessage(
-            currentLanguage === 'ta'
-              ? 'ஒலிப்பதிவு காலியாக உள்ளது. மீண்டும் பேசவும்.'
-              : 'Recording is empty. Please try speaking again.'
-          );
+        if (audioBlob.size > 100) {
+          await processAudioWithSarvamSTT(audioBlob);
+        } else {
           setMicState('idle');
-          return;
         }
-
-        await processAudioWithSarvamSTT(audioBlob);
       };
 
       mediaRecorder.start(250); // collect data every 250ms
@@ -115,24 +172,20 @@ export function ChatInputForm({
             ? 'மைக்ரோஃபோன் சாதனம் கண்டறியப்படவில்லை.'
             : 'No microphone device detected on this computer.'
         );
-      } else {
-        setErrorMessage(
-          currentLanguage === 'ta'
-            ? 'தமிழ் குரலை பெற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.'
-            : `Microphone error: ${errorObj.message || 'Unable to access microphone'}`
-        );
       }
 
       setMicState('idle');
-      fallbackWebSpeechSTT();
     }
   };
 
   const handleStopRecording = () => {
+    stopWebSpeechSTT();
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       console.log('[ChatInputForm] Stopping recording manually...');
       setMicState('processing');
       mediaRecorderRef.current.stop();
+    } else {
+      setMicState('idle');
     }
   };
 
@@ -179,62 +232,11 @@ export function ChatInputForm({
         return;
       }
 
-      console.warn('[ChatInputForm] Sarvam STT API error or empty transcript:', data);
-      setErrorMessage(
-        currentLanguage === 'ta'
-          ? 'தமிழ் குரலை புரிந்துகொள்ள முடியவில்லை. மீண்டும் முயற்சிக்கவும்.'
-          : data.error || 'Speech not recognized. Please try speaking clearly again.'
-      );
-      fallbackWebSpeechSTT();
+      console.warn('[ChatInputForm] Sarvam STT API warning:', data);
     } catch (err) {
       console.error('[ChatInputForm STT Fetch Error]:', err);
-      setErrorMessage(
-        currentLanguage === 'ta'
-          ? 'தமிழ் குரலை புரிந்துகொள்ள முடியவில்லை. மீண்டும் முயற்சிக்கவும்.'
-          : 'Network error connecting to Speech-to-Text service.'
-      );
-      fallbackWebSpeechSTT();
     } finally {
       setMicState('idle');
-    }
-  };
-
-  const fallbackWebSpeechSTT = () => {
-    console.log('[ChatInputForm] Attempting Web Speech API fallback for Speech Recognition...');
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition =
-        (window as unknown as { SpeechRecognition?: typeof React.Component }).SpeechRecognition ||
-        (window as unknown as { webkitSpeechRecognition?: typeof React.Component }).webkitSpeechRecognition;
-
-      if (SpeechRecognition) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const recognition = new (SpeechRecognition as any)();
-          const targetLang = currentLanguage === 'ta' ? 'ta-IN' : 'en-IN';
-          recognition.lang = targetLang;
-          recognition.interimResults = false;
-
-          console.log('[ChatInputForm WebSpeech Fallback] Set recognition.lang =', targetLang);
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          recognition.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            if (transcript) {
-              console.log('[ChatInputForm WebSpeech Fallback] Recognized:', transcript);
-              setInputText(transcript);
-              setErrorMessage(null);
-            }
-          };
-
-          recognition.onerror = (e: unknown) => {
-            console.warn('[ChatInputForm WebSpeech Fallback Error]:', e);
-          };
-
-          recognition.start();
-        } catch (e) {
-          console.warn('[ChatInputForm WebSpeech Fallback exception]:', e);
-        }
-      }
     }
   };
 
