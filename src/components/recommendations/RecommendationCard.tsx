@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import {
   Trophy,
   Medal,
@@ -46,49 +45,47 @@ export function RecommendationCard({
   isSelected,
   onSelectOption,
 }: RecommendationCardProps) {
-  const [showWhyAccordion, setShowWhyAccordion] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const { currentLanguage } = useLanguage();
   const lang = currentLanguage === 'ta' ? 'ta' : 'en';
 
-  const getRankBadge = (rank: number) => {
-    if (rank === 1) {
-      return (
-        <Badge className="bg-amber-500 text-white font-extrabold text-xs px-3 py-1 shadow-md shadow-amber-200 dark:shadow-none flex items-center gap-1.5">
-          <Trophy className="w-4 h-4 fill-white" />
-          <span>🥇 Rank #1 Recommendation</span>
-        </Badge>
-      );
-    }
-    if (rank === 2) {
-      return (
-        <Badge className="bg-slate-700 text-white font-bold text-xs px-3 py-1 flex items-center gap-1.5">
-          <Medal className="w-4 h-4" />
-          <span>🥈 Rank #2 Recommendation</span>
-        </Badge>
-      );
-    }
-    return (
-      <Badge variant="secondary" className="font-bold text-xs px-3 py-1 flex items-center gap-1.5">
-        <Medal className="w-4 h-4 text-amber-700" />
-        <span>🥉 Rank #3 Recommendation</span>
-      </Badge>
-    );
-  };
+  const isRank1 = option.rank === 1;
 
   return (
     <Card
-      className={`w-full transition-all duration-200 border-2 ${
-        isSelected
-          ? 'border-emerald-600 bg-emerald-50/20 dark:bg-emerald-950/20 shadow-lg ring-2 ring-emerald-500/20'
-          : 'border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900 shadow-sm'
+      className={`w-full transition-all duration-200 border-2 rounded-2xl overflow-hidden ${
+        isRank1
+          ? 'border-emerald-600 bg-emerald-50/30 dark:bg-emerald-950/30 shadow-lg ring-1 ring-emerald-500/30'
+          : isSelected
+          ? 'border-emerald-500 bg-white dark:bg-slate-900 shadow-md'
+          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:border-emerald-300'
       }`}
     >
-      <CardHeader className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-2">
-          {getRankBadge(option.rank)}
+      {/* Top Banner / Rank Badge & Title */}
+      <CardHeader className="p-5 sm:p-6 border-b border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
+                isRank1
+                  ? 'bg-amber-500 text-white shadow-sm'
+                  : option.rank === 2
+                  ? 'bg-slate-700 text-white'
+                  : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+              }`}
+            >
+              {option.rank === 1 && <Trophy className="w-3.5 h-3.5 fill-white" />}
+              {option.rank !== 1 && <Medal className="w-3.5 h-3.5" />}
+              <span>#{option.rank} Recommendation</span>
+            </span>
 
-          <CardTitle className="text-xl font-extrabold text-slate-900 dark:text-slate-50 flex items-center gap-2">
-            <span>{option.qualification.title}</span>
+            <Badge variant="outline" className="text-xs font-mono border-slate-300 dark:border-slate-700">
+              NSQF Level {option.qualification.nsqf_level}
+            </Badge>
+          </div>
+
+          <CardTitle className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-50">
+            {option.qualification.title}
           </CardTitle>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -96,83 +93,104 @@ export function RecommendationCard({
           </p>
         </div>
 
-        {/* Match Percentage Ring */}
+        {/* Match Percentage Badge Ring */}
         <div className="flex items-center gap-3 self-start sm:self-center">
-          <div className="relative w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border-4 border-emerald-500 flex flex-col items-center justify-center text-center shadow-inner">
-            <span className="text-base font-black text-emerald-700 dark:text-emerald-300 leading-none">
-              {option.matchPercentage}%
-            </span>
-            <span className="text-[9px] uppercase font-bold text-emerald-600">Match</span>
+          <div
+            className={`w-16 h-16 rounded-2xl flex flex-col items-center justify-center text-center shadow-inner border-2 ${
+              isRank1
+                ? 'bg-emerald-600 text-white border-emerald-500'
+                : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 text-emerald-800 dark:text-emerald-200'
+            }`}
+          >
+            <span className="text-lg font-black leading-none">{option.matchPercentage}%</span>
+            <span className="text-[9px] uppercase font-bold tracking-wider opacity-90">Match</span>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6 space-y-6">
-        {/* Short Description */}
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-          {option.qualification.description}
-        </p>
-
-        {/* Info Icon triggering Expandable "Why this recommendation?" Accordion */}
-        <div className="space-y-2">
-          <AccordionItem className="border border-emerald-200 dark:border-emerald-900 bg-emerald-50/40 dark:bg-emerald-950/30">
-            <AccordionTrigger
-              isOpen={showWhyAccordion}
-              onToggle={() => setShowWhyAccordion(!showWhyAccordion)}
-              className="text-emerald-900 dark:text-emerald-200 hover:bg-emerald-100/50"
-            >
-              <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
-                <Info className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Why this recommendation? (Livelihood Reasoning)</span>
-              </div>
-            </AccordionTrigger>
-
-            <AccordionContent isOpen={showWhyAccordion}>
-              <div className="p-3 bg-white dark:bg-slate-900 rounded-lg text-xs leading-relaxed text-slate-700 dark:text-slate-300 border border-emerald-200 dark:border-emerald-800">
-                {option.whyExplanation[lang]}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+      <CardContent className="p-5 sm:p-6 space-y-5">
+        {/* Why it matches */}
+        <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+          <strong className="text-emerald-800 dark:text-emerald-400 block mb-1">
+            Why this matches:
+          </strong>
+          {option.whyExplanation[lang]}
         </div>
 
-        {/* Training Path (BookOpen icon) & Training Centre Finder (School, Phone, Map icons) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          {/* Training Path */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
-              <BookOpen className="w-4 h-4 text-emerald-600" />
-              <span>NSQF Training Path ({option.qualification.maximum_notational_hours} Hours)</span>
-            </div>
-            <p className="text-slate-600 dark:text-slate-400 font-medium">
-              {option.trainingPath[lang]}
-            </p>
+        {/* Skills & Gap Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+            <span className="font-bold text-slate-500 uppercase tracking-wider block mb-1">
+              Relevant Skills
+            </span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {option.qualification.proposed_occupation}
+            </span>
           </div>
 
-          {/* Training Centre Finder */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
-              <School className="w-4 h-4 text-emerald-600" />
-              <span>Nearby Training Centre ({option.trainingCenter.distanceKm} km away)</span>
-            </div>
-            <p className="text-slate-700 dark:text-slate-300 font-semibold">
-              {option.trainingCenter.name} ({option.trainingCenter.type})
-            </p>
-            <div className="flex items-center justify-between text-[11px] pt-1 text-slate-500">
-              <span className="flex items-center gap-1">
-                <Phone className="w-3 h-3 text-emerald-600" />
-                <span>{option.trainingCenter.phone}</span>
-              </span>
-              <a
-                href={option.trainingCenter.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-emerald-600 hover:underline font-semibold"
-              >
-                <Map className="w-3 h-3" />
-                <span>Open Map</span>
-              </a>
-            </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+            <span className="font-bold text-slate-500 uppercase tracking-wider block mb-1">
+              Skill Gap Summary
+            </span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {option.qualification.maximum_notational_hours} hrs accredited training
+            </span>
           </div>
+        </div>
+
+        {/* Expandable Details Accordion */}
+        <div className="space-y-2">
+          <button
+            onClick={() => setShowDetails(!showDetails)}
+            className="w-full flex items-center justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400 py-1.5 hover:underline"
+          >
+            <span className="flex items-center gap-1.5">
+              <Info className="w-4 h-4" />
+              <span>{showDetails ? 'Hide Details' : 'View Full Training & Location Details →'}</span>
+            </span>
+            <span>{showDetails ? '▲' : '▼'}</span>
+          </button>
+
+          {showDetails && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2 animate-in fade-in duration-200">
+              {/* Training Path */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
+                  <BookOpen className="w-4 h-4 text-emerald-600" />
+                  <span>NSQF Training Path ({option.qualification.maximum_notational_hours} Hours)</span>
+                </div>
+                <p className="text-slate-600 dark:text-slate-400 font-medium">
+                  {option.trainingPath[lang]}
+                </p>
+              </div>
+
+              {/* Training Centre Finder */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-slate-100">
+                  <School className="w-4 h-4 text-emerald-600" />
+                  <span>Nearby Training Centre ({option.trainingCenter.distanceKm} km away)</span>
+                </div>
+                <p className="text-slate-700 dark:text-slate-300 font-semibold">
+                  {option.trainingCenter.name} ({option.trainingCenter.type})
+                </p>
+                <div className="flex items-center justify-between text-[11px] pt-1 text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Phone className="w-3 h-3 text-emerald-600" />
+                    <span>{option.trainingCenter.phone}</span>
+                  </span>
+                  <a
+                    href={option.trainingCenter.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-emerald-600 hover:underline font-semibold"
+                  >
+                    <Map className="w-3 h-3" />
+                    <span>Open Map</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Select Action Button */}
@@ -180,7 +198,7 @@ export function RecommendationCard({
           onClick={() => onSelectOption && onSelectOption(option)}
           className={`w-full py-3 rounded-xl font-bold text-sm ${
             isSelected
-              ? 'bg-emerald-700 text-white'
+              ? 'bg-emerald-800 text-white'
               : 'bg-emerald-600 hover:bg-emerald-700 text-white'
           }`}
         >

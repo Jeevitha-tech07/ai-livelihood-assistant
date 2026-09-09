@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Compass } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export function WelcomeHero() {
@@ -25,17 +25,11 @@ export function WelcomeHero() {
   const text = content[currentLanguage as keyof typeof content] || content.en;
 
   return (
-    <div className="flex flex-col items-center text-center space-y-6 max-w-2xl mx-auto">
-      {/* Hero Icon Badge */}
-      <div className="relative flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 ring-8 ring-emerald-50 dark:ring-emerald-950/30 shadow-lg shadow-emerald-100/50">
-        <Sparkles className="w-10 h-10 animate-pulse" />
-        <Compass className="w-5 h-5 absolute -bottom-1 -right-1 text-emerald-700 dark:text-emerald-300" />
-      </div>
-
-      {/* Tagline Badge */}
-      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
-        <Sparkles className="w-3.5 h-3.5" />
-        {text.badge}
+    <div className="flex flex-col items-center text-center space-y-5 max-w-2xl mx-auto">
+      {/* Social Impact / Government Tech Identity Badge */}
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 shadow-sm">
+        <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+        <span>{text.badge} • Ministry of Skill Development & Entrepreneurship Framework</span>
       </div>
 
       {/* Main Title */}
